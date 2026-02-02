@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:">
+  <title>RePrompt</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="window">
+    <!-- Title Bar -->
+    <div class="titlebar">
+      <div class="titlebar-title">
+        <span class="app-icon">⚡</span>
+        <span>RePrompt</span>
+      </div>
+      <div class="titlebar-controls">
+        <button class="titlebar-btn minimize" id="minimize-btn" title="Minimize">─</button>
+        <button class="titlebar-btn maximize" id="maximize-btn" title="Maximize">□</button>
+        <button class="titlebar-btn close" id="close-btn" title="Close">✕</button>
+      </div>
+    </div>
+
+    <!-- Dashboard Layout -->
+    <div class="dashboard">
+      <!-- Sidebar -->
+      <nav class="sidebar">
+        <div class="sidebar-section">
+          <button class="sidebar-item active" data-page="home">
+            <span class="sidebar-item-icon">🏠</span>
+            <span>Home</span>
+          </button>
+          <button class="sidebar-item" data-page="agents">
+            <span class="sidebar-item-icon">🤖</span>
+            <span>Agents</span>
+          </button>
+          <button class="sidebar-item" data-page="settings">
+            <span class="sidebar-item-icon">⚙️</span>
+            <span>Settings</span>
+          </button>
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-label">Quick Access</div>
+          <button class="sidebar-item" data-shortcut="coding">
+            <span class="sidebar-item-icon">💻</span>
+            <span>Coding</span>
+          </button>
+          <button class="sidebar-item" data-shortcut="writing">
+            <span class="sidebar-item-icon">📝</span>
+            <span>Writing</span>
+          </button>
+          <button class="sidebar-item" data-shortcut="email">
+            <span class="sidebar-item-icon">✉️</span>
+            <span>Email</span>
+          </button>
+        </div>
+
+        <div class="sidebar-footer">
+          <p>v1.0.0 • Groq</p>
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Home Page -->
+        <div class="page" id="page-home">
+          <!-- Page Header -->
+          <div class="page-header">
+            <h1>Welcome to RePrompt</h1>
+            <p class="subtitle">Transform any text into optimized AI prompts with a single shortcut</p>
+          </div>
+
+          <!-- API Key Card -->
+          <div class="card">
+            <div class="card-header">
+              <h2>🔑 API Configuration</h2>
+              <span class="badge badge-error" id="api-status">Not configured</span>
+            </div>
+            <p class="card-description">
+              Enter your Groq API key to enable AI-powered prompt optimization.
+              <a href="#" id="get-api-key-link">Get your API key →</a>
+            </p>
+            <div class="input-group">
+              <input type="password" id="api-key-input" class="input" placeholder="gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                autocomplete="off">
+              <button class="btn btn-icon" id="toggle-visibility">👁</button>
+            </div>
+            <div class="button-group">
+              <button class="btn btn-primary" id="save-api-key">Save Key</button>
+              <button class="btn btn-secondary" id="delete-api-key">Delete</button>
+            </div>
+            <div class="message" id="api-message"></div>
+          </div>
+
+          <!-- Shortcuts Card -->
+          <div class="card">
+            <div class="card-header">
+              <h2>⌨️ Global Shortcuts</h2>
+              <span class="badge badge-success" id="shortcut-status">Enabled</span>
+            </div>
+            <p class="card-description">
+              Master toggle for all agent shortcuts. When disabled, no shortcuts will work.
+            </p>
+            <button class="btn btn-secondary" id="toggle-shortcut">Toggle All Shortcuts</button>
+          </div>
+        </div>
+
+        <!-- Agents Page -->
+        <div class="page" id="page-agents" style="display: none;">
+          <div class="page-header">
+            <h1>AI Agents</h1>
+            <p class="subtitle">Manage your prompt optimization agents</p>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>🤖 Available Agents</h2>
+              <span class="badge badge-success" id="agents-status">6 Active</span>
+            </div>
+            <p class="card-description">
+              Each agent uses specialized AI prompts. Use <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Key</kbd> to
+              optimize text.
+            </p>
+
+            <!-- Agents List -->
+            <div class="agents-list" id="agents-list">
+              <!-- Agents will be rendered here by JavaScript -->
+            </div>
+
+            <button class="btn btn-primary" id="add-custom-agent">+ Add Custom Agent</button>
+          </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div class="page" id="page-settings" style="display: none;">
+          <div class="page-header">
+            <h1>Settings</h1>
+            <p class="subtitle">Configure application preferences</p>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>ℹ️ About</h2>
+            </div>
+            <p class="card-description">
+              RePrompt is an AI-powered prompt optimization tool that helps you write better prompts for any AI
+              assistant.
+              Select text anywhere, press your shortcut, and get an optimized prompt instantly.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>🔗 Quick Links</h2>
+            </div>
+            <div class="button-group">
+              <button class="btn btn-secondary" onclick="window.open('https://console.groq.com/keys', '_blank')">Get API
+                Key</button>
+              <button class="btn btn-secondary"
+                onclick="window.open('https://console.groq.com/docs', '_blank')">Documentation</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Custom Agent Modal -->
+  <div class="modal" id="agent-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Add Custom Agent</h3>
+        <button class="titlebar-btn close" id="modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="agent-name">Agent Name</label>
+          <input type="text" id="agent-name" class="input" placeholder="My Agent">
+        </div>
+        <div class="form-group">
+          <label for="agent-icon">Icon (emoji)</label>
+          <input type="text" id="agent-icon" class="input" placeholder="🤖" maxlength="2">
+        </div>
+        <div class="form-group">
+          <label for="agent-shortcut-key">Shortcut Key (Ctrl+Shift+?)</label>
+          <input type="text" id="agent-shortcut-key" class="input" placeholder="X" maxlength="1">
+          <span class="input-hint" id="shortcut-hint"></span>
+        </div>
+        <div class="form-group">
+          <label for="agent-prompt">System Prompt</label>
+          <textarea id="agent-prompt" class="input textarea" rows="6"
+            placeholder="You are a helpful assistant..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="modal-cancel">Cancel</button>
+        <button class="btn btn-primary" id="modal-save">Save Agent</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="settings.js"></script>
+</body>
+
+</html>

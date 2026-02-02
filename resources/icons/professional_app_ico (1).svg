@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="1024" height="1024">
+  <defs>
+    <!-- Primary Electric Blue Gradient -->
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2383E2"/>
+      <stop offset="100%" stop-color="#1A6CB8"/>
+    </linearGradient>
+    
+    <!-- Accent Cyan Glow Gradient for the "AI" element -->
+    <linearGradient id="accentGrad" x1="20%" y1="20%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4DD0E1"/>
+      <stop offset="100%" stop-color="#2383E2"/>
+    </linearGradient>
+    
+    <!-- Subtle Drop Shadow for Depth -->
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dx="4" dy="8" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode in="offsetblur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background: Rounded Square (iOS/macOS standard shape) -->
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="#191919"/>
+
+  <!-- Main Monogram Structure -->
+  <g transform="translate(0, 10)" filter="url(#dropShadow)">
+    
+    <!-- The "P" / Stem Structure: Represents the base prompt/input -->
+    <!-- Vertical Stem and Loop constructed as a single continuous geometric path -->
+    <path d="M165 382 V 150 A 90 90 0 0 1 345 150 A 90 90 0 0 1 200 235" fill="none" stroke="url(#primaryGrad)" stroke-width="65" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- The "R" Leg / Transformation Beam: Represents the AI optimization -->
+    <!-- This element intersects the P to form the R, styled as a dynamic beam -->
+    <path d="M245 245 L355 382" fill="none" stroke="url(#accentGrad)" stroke-width="65" stroke-linecap="round" stroke-linejoin="round"/>
+          
+    <!-- The "AI Spark" Node -->
+    <!-- A subtle geometric diamond at the intersection point to symbolize the "Brain/AI" -->
+    <rect x="225" y="225" width="40" height="40" rx="8" transform="rotate(45 245 245)" fill="#FFFFFF"/>
+    
+  </g>
+</svg>

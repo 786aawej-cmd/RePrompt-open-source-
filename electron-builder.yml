@@ -1,0 +1,35 @@
+appId: com.reprompt.app
+productName: RePrompt
+copyright: Copyright © 2026 RePrompt
+
+directories:
+  output: release
+  buildResources: resources
+
+files:
+  - dist/**/*
+  - resources/**/*
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+  icon: resources/icons/icon.ico
+  sign: null
+  signDlls: false
+  forceCodeSigning: false
+
+nsis:
+  oneClick: true
+  perMachine: false
+  allowToChangeInstallationDirectory: false
+  artifactName: RePrompt-Setup-${version}.exe
+
+portable:
+  artifactName: RePrompt-${version}.exe
+
+asar: true
