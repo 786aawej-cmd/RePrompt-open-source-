@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, ipcRenderer } from 'electron';
 import * as path from 'path';
+import AutoLaunch from 'auto-launch';
 import { TrayManager } from './trayManager';
 import { ShortcutManager } from './shortcutManager';
 import { StorageManager } from './storageManager';
@@ -9,9 +10,14 @@ class RePromptApp {
     private trayManager: TrayManager | null = null;
     private shortcutManager: ShortcutManager | null = null;
     private storageManager: StorageManager;
+    private autoLauncher: AutoLaunch;
 
     constructor() {
         this.storageManager = new StorageManager();
+        this.autoLauncher = new AutoLaunch({
+            name: 'RePrompt',
+            path: app.getPath('exe'),
+        });
         this.setupApp();
         this.setupIPC();
     }
@@ -54,9 +60,24 @@ class RePromptApp {
         // Initialize shortcuts
         this.shortcutManager = new ShortcutManager(this.storageManager);
 
+        // Setup auto-launch
+        this.setupAutoLaunch();
+
         // If no API key, show settings window
         if (!this.storageManager.hasApiKey()) {
             this.showSettingsWindow();
+        }
+    }
+
+    private async setupAutoLaunch(): Promise<void> {
+        try {
+            const isEnabled = await this.autoLauncher.isEnabled();
+            if (!isEnabled) {
+                await this.autoLauncher.enable();
+                console.log('Auto-launch enabled');
+            }
+        } catch (error) {
+            console.error('Failed to setup auto-launch:', error);
         }
     }
 
