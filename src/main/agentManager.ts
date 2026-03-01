@@ -187,7 +187,7 @@ export class AgentManager {
             {
                 id: 'coding',
                 name: 'Coding',
-                shortcut: 'Ctrl+Shift+C',
+                shortcut: 'Alt+Shift+C',
                 shortcutKey: 'C',
                 icon: '💻',
                 isBuiltIn: true,
@@ -351,7 +351,7 @@ IMPORTANT: Generate ONLY the prompt above. Do NOT include explanations like "Her
             {
                 id: 'writing',
                 name: 'Writing',
-                shortcut: 'Ctrl+Shift+W',
+                shortcut: 'Alt+Shift+W',
                 shortcutKey: 'W',
                 icon: '✍️',
                 isBuiltIn: true,
@@ -529,7 +529,7 @@ IMPORTANT: Generate ONLY the prompt. No meta-commentary. Start directly with the
             {
                 id: 'email',
                 name: 'Email',
-                shortcut: 'Ctrl+Shift+E',
+                shortcut: 'Alt+Shift+E',
                 shortcutKey: 'E',
                 icon: '📧',
                 isBuiltIn: true,
@@ -753,7 +753,7 @@ IMPORTANT: Generate ONLY the prompt. No meta-commentary. Start directly with the
             {
                 id: 'summarize',
                 name: 'Summarize',
-                shortcut: 'Ctrl+Shift+S',
+                shortcut: 'Alt+Shift+S',
                 shortcutKey: 'S',
                 icon: '📝',
                 isBuiltIn: true,
@@ -953,7 +953,7 @@ IMPORTANT: Generate ONLY the prompt. No meta-commentary. Start directly with the
             {
                 id: 'translate',
                 name: 'Translate',
-                shortcut: 'Ctrl+Shift+T',
+                shortcut: 'Alt+Shift+T',
                 shortcutKey: 'T',
                 icon: '🌐',
                 isBuiltIn: true,
@@ -1138,7 +1138,7 @@ IMPORTANT: Generate ONLY the prompt. No meta-commentary. Start directly with the
             {
                 id: 'general',
                 name: 'General',
-                shortcut: 'Ctrl+Shift+O',
+                shortcut: 'Alt+Shift+O',
                 shortcutKey: 'O',
                 icon: '✨',
                 isBuiltIn: true,
@@ -1357,7 +1357,7 @@ The prompt you generate should be ready to paste into ChatGPT, Claude, Gemini, o
             {
                 id: 'grammar',
                 name: 'Grammar',
-                shortcut: 'Ctrl+P+G',
+                shortcut: 'Alt+Shift+G',
                 shortcutKey: 'G',
                 icon: '✏️',
                 isBuiltIn: true,
@@ -1420,7 +1420,7 @@ CRITICAL: Your response = the corrected text ONLY. Nothing else.`
             {
                 id: 'simple-optimizer',
                 name: 'Simple Optimizer',
-                shortcut: 'Ctrl+P+S',
+                shortcut: 'Alt+Shift+P',
                 shortcutKey: 'S',
                 icon: '⚡',
                 isBuiltIn: true,
@@ -1609,6 +1609,11 @@ CRITICAL: Generate ONLY the prompt. No explanations or meta-commentary.`;
                 const builtIn = this.agents.get(savedAgent.id);
                 if (builtIn) {
                     builtIn.enabled = savedAgent.enabled;
+                    builtIn.name = savedAgent.name;
+                    builtIn.shortcut = savedAgent.shortcut;
+                    builtIn.shortcutKey = savedAgent.shortcutKey;
+                    builtIn.systemPrompt = savedAgent.systemPrompt;
+                    builtIn.icon = savedAgent.icon;
                 }
             } else {
                 this.agents.set(savedAgent.id, savedAgent);

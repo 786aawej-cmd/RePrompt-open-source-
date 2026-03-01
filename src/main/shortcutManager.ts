@@ -2,14 +2,14 @@ import { globalShortcut, Notification } from 'electron';
 import { StorageManager } from './storageManager';
 import { ClipboardManager } from './clipboardManager';
 import { KeyboardSimulator } from './keyboardSimulator';
-import { GroqClient } from './groqClient';
+import { ClaudeClient } from './claudeClient';
 import { AgentManager, Agent } from './agentManager';
 
 export class ShortcutManager {
     private storageManager: StorageManager;
     private clipboardManager: ClipboardManager;
     private keyboardSimulator: KeyboardSimulator;
-    private groqClient: GroqClient;
+    private claudeClient: ClaudeClient;
     private agentManager: AgentManager;
     private enabled: boolean = true;
     private isProcessing: boolean = false;
@@ -19,7 +19,7 @@ export class ShortcutManager {
         this.storageManager = storageManager;
         this.clipboardManager = new ClipboardManager();
         this.keyboardSimulator = new KeyboardSimulator();
-        this.groqClient = new GroqClient(storageManager);
+        this.claudeClient = new ClaudeClient(storageManager);
         this.agentManager = new AgentManager();
         this.enabled = storageManager.isShortcutEnabled();
 
@@ -110,8 +110,8 @@ export class ShortcutManager {
                 return;
             }
 
-            // Step 4: Send to Groq API with agent-specific prompt
-            const optimizedText = await this.groqClient.optimizeText(originalText, agent.systemPrompt);
+            // Step 4: Send to Claude API with agent-specific prompt
+            const optimizedText = await this.claudeClient.optimizeText(originalText, agent.systemPrompt);
 
             if (!optimizedText) {
                 this.showNotification('Optimization Failed', 'Failed to optimize text');

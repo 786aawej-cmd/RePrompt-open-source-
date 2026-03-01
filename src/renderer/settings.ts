@@ -41,10 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const agentPromptInput = document.getElementById('agent-prompt') as HTMLTextAreaElement;
     const shortcutHint = document.getElementById('shortcut-hint') as HTMLSpanElement;
 
-    // Elements - Window Controls
-    const closeBtn = document.getElementById('close-btn') as HTMLButtonElement;
-    const minimizeBtn = document.getElementById('minimize-btn') as HTMLButtonElement;
-    const maximizeBtn = document.getElementById('maximize-btn') as HTMLButtonElement;
+    // Elements - External Links
     const getApiKeyLink = document.getElementById('get-api-key-link') as HTMLAnchorElement;
 
     // Elements - Sidebar & Pages
@@ -79,19 +76,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
-    // ===== WINDOW CONTROLS =====
-    closeBtn.addEventListener('click', () => {
-        window.electronAPI.closeWindow();
-    });
-
-    minimizeBtn.addEventListener('click', () => {
-        window.electronAPI.minimizeWindow();
-    });
-
-    maximizeBtn.addEventListener('click', () => {
-        window.electronAPI.maximizeWindow();
-    });
-
     // ===== API KEY MANAGEMENT =====
     toggleVisibilityBtn.addEventListener('click', () => {
         const isPassword = apiKeyInput.type === 'password';
@@ -107,8 +91,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        if (!apiKey.startsWith('gsk_')) {
-            showMessage('Invalid API key format. Groq keys start with "gsk_"', 'error');
+        if (!apiKey.startsWith('sk-ant-')) {
+            showMessage('Invalid API key format. Anthropic keys start with "sk-ant-"', 'error');
             return;
         }
 
@@ -130,7 +114,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (success) {
             showMessage('API key deleted', 'success');
             updateApiStatus(false);
-            apiKeyInput.placeholder = 'gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+            apiKeyInput.placeholder = 'sk-ant-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
         } else {
             showMessage('Failed to delete API key', 'error');
         }
@@ -166,7 +150,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (key.length === 1) {
             const available = await window.electronAPI.isShortcutAvailable(key, currentEditingAgentId || undefined);
             if (available) {
-                shortcutHint.textContent = `Shortcut: Ctrl+Shift+${key}`;
+                shortcutHint.textContent = `Shortcut: Alt+Shift+${key}`;
                 shortcutHint.className = 'input-hint success';
             } else {
                 shortcutHint.textContent = 'This shortcut is already in use';
@@ -208,7 +192,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const agentData = {
             name,
             icon,
-            shortcut: `Ctrl+Shift+${shortcutKey}`,
+            shortcut: `Alt+Shift+${shortcutKey}`,
             shortcutKey,
             systemPrompt,
             enabled: true
@@ -227,7 +211,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ===== EXTERNAL LINKS =====
     getApiKeyLink.addEventListener('click', (e) => {
         e.preventDefault();
-        window.open('https://console.groq.com/keys', '_blank');
+        window.open('https://console.anthropic.com/settings/keys', '_blank');
     });
 
     // ===== HELPER FUNCTIONS =====
@@ -254,30 +238,51 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         agents.forEach(agent => {
             const agentItem = document.createElement('div');
-            agentItem.className = 'agent-item';
+            agentItem.className = 'brutal-list-item';
             agentItem.innerHTML = `
-                <div class="agent-info">
-                    <span class="agent-icon">${agent.icon || '✨'}</span>
-                    <div class="agent-details">
-                        <span class="agent-name">${agent.name}</span>
-                        <span class="agent-shortcut">${agent.shortcut}</span>
-                    </div>
+                <div class="brutal-avatar">${agent.icon || '✨'}</div>
+                <div class="brutal-list-text">
+                    <div class="brutal-list-title">${agent.name}</div>
+                    <div class="brutal-list-subtitle"><kbd>${agent.shortcut}</kbd></div>
                 </div>
-                <div class="agent-controls">
-                    <label class="toggle-switch">
-                        <input type="checkbox" ${agent.enabled ? 'checked' : ''} data-agent-id="${agent.id}">
-                        <span class="toggle-slider"></span>
+                <div class="agent-controls" style="display: flex; gap: 12px; align-items: center;">
+                    <label class="brutal-switch ${agent.enabled ? 'active' : ''}">
+                        <input type="checkbox" ${agent.enabled ? 'checked' : ''} style="display:none;" data-agent-id="${agent.id}">
                     </label>
-                    ${!agent.isBuiltIn ? `<button class="btn-delete" data-agent-id="${agent.id}" title="Delete">🗑</button>` : ''}
+                    <button class="icon-btn btn-edit" data-agent-id="${agent.id}" title="Edit" style="display:flex; align-items:center; justify-content:center;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                    </button>
+                    ${!agent.isBuiltIn ? `
+                    <button class="icon-btn btn-delete" data-agent-id="${agent.id}" title="Delete" style="display:flex; align-items:center; justify-content:center;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                    </button>` : ''}
                 </div>
             `;
 
             // Toggle event
             const toggle = agentItem.querySelector('input[type="checkbox"]') as HTMLInputElement;
+            const toggleLabel = agentItem.querySelector('.brutal-switch') as HTMLLabelElement;
             toggle.addEventListener('change', async () => {
                 await window.electronAPI.setAgentEnabled(agent.id, toggle.checked);
+                toggleLabel.className = `brutal-switch ${toggle.checked ? 'active' : ''}`;
                 updateAgentsStatus();
             });
+
+            // Edit event (for all agents)
+            const editBtn = agentItem.querySelector('.btn-edit') as HTMLButtonElement;
+            if (editBtn) {
+                editBtn.addEventListener('click', () => {
+                    currentEditingAgentId = agent.id;
+                    modalTitle.textContent = agent.isBuiltIn ? 'Edit Built-in Agent' : 'Edit Custom Agent';
+                    agentNameInput.value = agent.name;
+                    agentIconInput.value = agent.icon || '🤖';
+                    agentShortcutKeyInput.value = agent.shortcutKey;
+                    agentPromptInput.value = agent.systemPrompt;
+                    shortcutHint.textContent = `Shortcut: ${agent.shortcut}`;
+                    shortcutHint.className = 'input-hint success';
+                    agentModal.classList.add('active');
+                });
+            }
 
             // Delete event (only for custom agents)
             const deleteBtn = agentItem.querySelector('.btn-delete') as HTMLButtonElement;
@@ -299,20 +304,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     function updateApiStatus(configured: boolean): void {
         if (configured) {
             apiStatus.textContent = 'Configured';
-            apiStatus.className = 'badge badge-success';
+            apiStatus.className = 'brutal-chip success';
         } else {
             apiStatus.textContent = 'Not configured';
-            apiStatus.className = 'badge badge-error';
+            apiStatus.className = 'brutal-chip error';
         }
     }
 
     function updateShortcutStatus(enabled: boolean): void {
         if (enabled) {
             shortcutStatus.textContent = 'Enabled';
-            shortcutStatus.className = 'badge badge-success';
+            shortcutStatus.className = 'brutal-chip success';
         } else {
             shortcutStatus.textContent = 'Disabled';
-            shortcutStatus.className = 'badge badge-warning';
+            shortcutStatus.className = 'brutal-chip warning';
         }
     }
 
@@ -322,10 +327,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (enabledCount > 0) {
             agentsStatus.textContent = `${enabledCount} Active`;
-            agentsStatus.className = 'badge badge-success';
+            agentsStatus.className = 'brutal-chip success';
         } else {
             agentsStatus.textContent = 'None Active';
-            agentsStatus.className = 'badge badge-warning';
+            agentsStatus.className = 'brutal-chip warning';
         }
     }
 
@@ -336,11 +341,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function showMessage(text: string, type: 'success' | 'error'): void {
         apiMessage.textContent = text;
-        apiMessage.className = `message ${type}`;
+        apiMessage.style.color = type === 'success' ? 'var(--brutal-accent)' : 'var(--brutal-error)';
 
         setTimeout(() => {
             apiMessage.textContent = '';
-            apiMessage.className = 'message';
         }, 3000);
     }
 });

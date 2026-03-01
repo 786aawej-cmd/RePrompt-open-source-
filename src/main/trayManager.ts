@@ -22,7 +22,7 @@ export class TrayManager {
     }
 
     private createTray(): void {
-        const iconPath = path.join(__dirname, '../../resources/icons/tray-icon.png');
+        const iconPath = path.join(__dirname, '../../resources/icons/icon.ico');
 
         // Create a simple icon if file doesn't exist
         let icon: NativeImage;

@@ -5,203 +5,153 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:">
-  <title>RePrompt</title>
+    content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:">
+  <title>RePrompt | Default UI</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-  <div class="window">
-    <!-- Title Bar -->
-    <div class="titlebar">
-      <div class="titlebar-title">
-        <span class="app-icon">⚡</span>
-        <span>RePrompt</span>
+  <div class="app-container">
+    <!-- Neo-Brutalist Navigation Sidebar -->
+    <nav class="nav-sidebar">
+      <div class="nav-destinations">
+        <button class="sidebar-item active" data-page="home" title="Settings">
+          <div class="nav-indicator">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <span class="nav-label">Config</span>
+        </button>
+
+        <button class="sidebar-item" data-page="agents" title="Agents">
+          <div class="nav-indicator">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 8V4H8"></path>
+              <rect width="16" height="12" x="4" y="8" rx="2"></rect>
+              <path d="M2 14h2"></path>
+              <path d="M20 14h2"></path>
+              <path d="M15 13v2"></path>
+              <path d="M9 13v2"></path>
+            </svg>
+          </div>
+          <span class="nav-label">Agents</span>
+        </button>
       </div>
-      <div class="titlebar-controls">
-        <button class="titlebar-btn minimize" id="minimize-btn" title="Minimize">─</button>
-        <button class="titlebar-btn maximize" id="maximize-btn" title="Maximize">□</button>
-        <button class="titlebar-btn close" id="close-btn" title="Close">✕</button>
+      <div class="nav-spacer"></div>
+      <div class="version-tag">
+        BYOK
       </div>
-    </div>
+    </nav>
 
-    <!-- Dashboard Layout -->
-    <div class="dashboard">
-      <!-- Sidebar -->
-      <nav class="sidebar">
-        <div class="sidebar-section">
-          <button class="sidebar-item active" data-page="home">
-            <span class="sidebar-item-icon">🏠</span>
-            <span>Home</span>
-          </button>
-          <button class="sidebar-item" data-page="agents">
-            <span class="sidebar-item-icon">🤖</span>
-            <span>Agents</span>
-          </button>
-          <button class="sidebar-item" data-page="settings">
-            <span class="sidebar-item-icon">⚙️</span>
-            <span>Settings</span>
-          </button>
-        </div>
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Home Page (Config) -->
+      <div class="page active" id="page-home">
+        <h1 class="sys-headline">RePrompt OS</h1>
+        <p class="sys-subhead">LOCAL ANTHROPIC TERMINAL</p>
 
-        <div class="sidebar-divider"></div>
-
-        <div class="sidebar-section">
-          <div class="sidebar-label">Quick Access</div>
-          <button class="sidebar-item" data-shortcut="coding">
-            <span class="sidebar-item-icon">💻</span>
-            <span>Coding</span>
-          </button>
-          <button class="sidebar-item" data-shortcut="writing">
-            <span class="sidebar-item-icon">📝</span>
-            <span>Writing</span>
-          </button>
-          <button class="sidebar-item" data-shortcut="email">
-            <span class="sidebar-item-icon">✉️</span>
-            <span>Email</span>
-          </button>
-        </div>
-
-        <div class="sidebar-footer">
-          <p>v1.0.0 • Groq</p>
-        </div>
-      </nav>
-
-      <!-- Main Content -->
-      <main class="main-content">
-        <!-- Home Page -->
-        <div class="page" id="page-home">
-          <!-- Page Header -->
-          <div class="page-header">
-            <h1>Welcome to RePrompt</h1>
-            <p class="subtitle">Transform any text into optimized AI prompts with a single shortcut</p>
+        <!-- API Key Card -->
+        <div class="brutal-card">
+          <div class="brutal-card-header">
+            <div>
+              <h2 class="sys-title">API Configuration</h2>
+              <p style="margin-top:4px;">Define your local Anthropic key below.</p>
+            </div>
+            <span class="brutal-chip error" id="api-status">Not configured</span>
           </div>
-
-          <!-- API Key Card -->
-          <div class="card">
-            <div class="card-header">
-              <h2>🔑 API Configuration</h2>
-              <span class="badge badge-error" id="api-status">Not configured</span>
+          <div style="margin-top: 16px;">
+            <div class="brutal-textfield" style="flex-direction: row; gap: 8px; margin-bottom: 16px;">
+              <input type="password" id="api-key-input" style="flex: 1; margin-bottom: 0;"
+                placeholder="sk-ant-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+              <button class="brutal-btn" id="toggle-visibility"
+                style="border-radius: 12px; padding: 0 16px;">👁</button>
             </div>
-            <p class="card-description">
-              Enter your Groq API key to enable AI-powered prompt optimization.
-              <a href="#" id="get-api-key-link">Get your API key →</a>
-            </p>
-            <div class="input-group">
-              <input type="password" id="api-key-input" class="input" placeholder="gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-                autocomplete="off">
-              <button class="btn btn-icon" id="toggle-visibility">👁</button>
+            <div style="display: flex; gap: 16px;">
+              <button class="brutal-btn brutal-btn-primary" id="save-api-key">Save Key</button>
+              <button class="brutal-btn" id="delete-api-key">Delete</button>
+              <button class="brutal-btn" id="get-api-key-link" style="margin-left:auto;">Get API Key →</button>
             </div>
-            <div class="button-group">
-              <button class="btn btn-primary" id="save-api-key">Save Key</button>
-              <button class="btn btn-secondary" id="delete-api-key">Delete</button>
-            </div>
-            <div class="message" id="api-message"></div>
-          </div>
-
-          <!-- Shortcuts Card -->
-          <div class="card">
-            <div class="card-header">
-              <h2>⌨️ Global Shortcuts</h2>
-              <span class="badge badge-success" id="shortcut-status">Enabled</span>
-            </div>
-            <p class="card-description">
-              Master toggle for all agent shortcuts. When disabled, no shortcuts will work.
-            </p>
-            <button class="btn btn-secondary" id="toggle-shortcut">Toggle All Shortcuts</button>
+            <div id="api-message" style="margin-top: 12px; font-weight: bold;"></div>
           </div>
         </div>
 
-        <!-- Agents Page -->
-        <div class="page" id="page-agents" style="display: none;">
-          <div class="page-header">
-            <h1>AI Agents</h1>
-            <p class="subtitle">Manage your prompt optimization agents</p>
+        <!-- Shortcuts Card -->
+        <div class="brutal-card">
+          <div class="brutal-card-header">
+            <div>
+              <h2 class="sys-title">Global Shortcuts</h2>
+              <p style="margin-top:4px;">Master toggle for background execution.</p>
+            </div>
+            <span class="brutal-chip success" id="shortcut-status">Enabled</span>
           </div>
-
-          <div class="card">
-            <div class="card-header">
-              <h2>🤖 Available Agents</h2>
-              <span class="badge badge-success" id="agents-status">6 Active</span>
-            </div>
-            <p class="card-description">
-              Each agent uses specialized AI prompts. Use <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Key</kbd> to
-              optimize text.
-            </p>
-
-            <!-- Agents List -->
-            <div class="agents-list" id="agents-list">
-              <!-- Agents will be rendered here by JavaScript -->
-            </div>
-
-            <button class="btn btn-primary" id="add-custom-agent">+ Add Custom Agent</button>
+          <div style="margin-top: 16px;">
+            <button class="brutal-btn brutal-btn-primary" id="toggle-shortcut">Toggle Shortcuts</button>
           </div>
         </div>
+      </div>
 
-        <!-- Settings Page -->
-        <div class="page" id="page-settings" style="display: none;">
-          <div class="page-header">
-            <h1>Settings</h1>
-            <p class="subtitle">Configure application preferences</p>
+      <!-- Agents Page -->
+      <div class="page" id="page-agents" style="display: none;">
+        <h1 class="sys-headline">Agents</h1>
+        <p class="sys-subhead">MANAGE PROMPT OPTIMIZERS</p>
+
+        <div class="brutal-card">
+          <div class="brutal-card-header"
+            style="margin-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px;">
+            <h2 class="sys-title">Available Agents</h2>
+            <span class="brutal-chip success" id="agents-status">6 Active</span>
           </div>
 
-          <div class="card">
-            <div class="card-header">
-              <h2>ℹ️ About</h2>
-            </div>
-            <p class="card-description">
-              RePrompt is an AI-powered prompt optimization tool that helps you write better prompts for any AI
-              assistant.
-              Select text anywhere, press your shortcut, and get an optimized prompt instantly.
-            </p>
+          <!-- Agents List -->
+          <div id="agents-list">
+            <!-- Rendered by settings.ts -->
           </div>
 
-          <div class="card">
-            <div class="card-header">
-              <h2>🔗 Quick Links</h2>
-            </div>
-            <div class="button-group">
-              <button class="btn btn-secondary" onclick="window.open('https://console.groq.com/keys', '_blank')">Get API
-                Key</button>
-              <button class="btn btn-secondary"
-                onclick="window.open('https://console.groq.com/docs', '_blank')">Documentation</button>
-            </div>
+          <div style="display: flex; justify-content: space-between; margin-top: 32px; padding-top: 24px;">
+            <button class="brutal-btn brutal-btn-primary" id="add-custom-agent">+ Add Custom Agent</button>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   </div>
 
   <!-- Custom Agent Modal -->
-  <div class="modal" id="agent-modal">
-    <div class="modal-content">
+  <div class="modal-overlay" id="agent-modal">
+    <div class="brutal-modal">
       <div class="modal-header">
-        <h3 id="modal-title">Add Custom Agent</h3>
-        <button class="titlebar-btn close" id="modal-close">✕</button>
+        <h2 class="sys-title" id="modal-title">Add Custom Agent</h2>
+        <button class="icon-btn" id="modal-close" title="Close">X</button>
       </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label for="agent-name">Agent Name</label>
-          <input type="text" id="agent-name" class="input" placeholder="My Agent">
-        </div>
-        <div class="form-group">
+
+      <div class="brutal-textfield">
+        <label for="agent-name">Agent Name</label>
+        <input type="text" id="agent-name" placeholder="My Agent">
+      </div>
+
+      <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+        <div class="brutal-textfield" style="width: 100px; margin-bottom: 0;">
           <label for="agent-icon">Icon (emoji)</label>
-          <input type="text" id="agent-icon" class="input" placeholder="🤖" maxlength="2">
+          <input type="text" id="agent-icon" maxlength="2" placeholder="🤖">
         </div>
-        <div class="form-group">
+        <div class="brutal-textfield" style="flex-grow: 1; margin-bottom: 0;">
           <label for="agent-shortcut-key">Shortcut Key (Ctrl+Shift+?)</label>
-          <input type="text" id="agent-shortcut-key" class="input" placeholder="X" maxlength="1">
+          <input type="text" id="agent-shortcut-key" maxlength="1" placeholder="X" style="text-transform: uppercase;">
           <span class="input-hint" id="shortcut-hint"></span>
         </div>
-        <div class="form-group">
-          <label for="agent-prompt">System Prompt</label>
-          <textarea id="agent-prompt" class="input textarea" rows="6"
-            placeholder="You are a helpful assistant..."></textarea>
-        </div>
       </div>
+
+      <div class="brutal-textfield">
+        <label for="agent-prompt">System Prompt</label>
+        <textarea id="agent-prompt" rows="6" placeholder="You are a helpful assistant..."></textarea>
+      </div>
+
       <div class="modal-footer">
-        <button class="btn btn-secondary" id="modal-cancel">Cancel</button>
-        <button class="btn btn-primary" id="modal-save">Save Agent</button>
+        <button class="brutal-btn" id="modal-cancel">Cancel</button>
+        <button class="brutal-btn brutal-btn-primary" id="modal-save">Save Agent</button>
       </div>
     </div>
   </div>

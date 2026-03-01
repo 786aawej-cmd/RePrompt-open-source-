@@ -175,9 +175,10 @@ class RePromptApp {
             resizable: true,
             maximizable: true,
             minimizable: true,
-            frame: false,
+            frame: true,
+            autoHideMenuBar: true,
             transparent: false,
-            backgroundColor: '#121212',
+            backgroundColor: '#000000',
             webPreferences: {
                 preload: path.join(__dirname, '../preload/preload.js'),
                 nodeIntegration: false,

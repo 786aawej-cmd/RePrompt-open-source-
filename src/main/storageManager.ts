@@ -31,8 +31,8 @@ export class StorageManager {
 
     setApiKey(apiKey: string): boolean {
         try {
-            // Basic validation - Groq API keys start with 'gsk_'
-            if (apiKey && !apiKey.startsWith('gsk_')) {
+            // Basic validation - Anthropic API keys start with 'sk-ant-'
+            if (apiKey && !apiKey.startsWith('sk-ant-')) {
                 return false;
             }
             this.store.set('apiKey', apiKey);
@@ -55,7 +55,7 @@ export class StorageManager {
 
     hasApiKey(): boolean {
         const apiKey = this.getApiKey();
-        return apiKey.length > 0 && apiKey.startsWith('gsk_');
+        return apiKey.length > 0 && apiKey.startsWith('sk-ant-');
     }
 
     // Shortcut Management

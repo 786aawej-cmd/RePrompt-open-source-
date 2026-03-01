@@ -1,15 +1,15 @@
-import Groq from 'groq-sdk';
+import Anthropic from '@anthropic-ai/sdk';
 import { StorageManager } from './storageManager';
 
-export class GroqClient {
+export class ClaudeClient {
     private storageManager: StorageManager;
-    private client: Groq | null = null;
+    private client: Anthropic | null = null;
 
     constructor(storageManager: StorageManager) {
         this.storageManager = storageManager;
     }
 
-    private getClient(): Groq | null {
+    private getClient(): Anthropic | null {
         const apiKey = this.storageManager.getApiKey();
 
         if (!apiKey) {
@@ -17,8 +17,9 @@ export class GroqClient {
         }
 
         // Create new client if API key changed
-        if (!this.client) {
-            this.client = new Groq({ apiKey });
+        if (!this.client || this.client.apiKey !== apiKey) {
+            // we configure the client with the provided api key
+            this.client = new Anthropic({ apiKey });
         }
 
         return this.client;
@@ -30,14 +31,14 @@ export class GroqClient {
     refreshClient(): void {
         const apiKey = this.storageManager.getApiKey();
         if (apiKey) {
-            this.client = new Groq({ apiKey });
+            this.client = new Anthropic({ apiKey });
         } else {
             this.client = null;
         }
     }
 
     /**
-     * Optimizes text using Groq API with Llama 3.3 70B model
+     * Optimizes text using Anthropic API with Claude 3.5 Sonnet
      * @param text The text to optimize
      * @param agentPrompt Optional agent-specific system prompt
      */
@@ -45,7 +46,7 @@ export class GroqClient {
         const client = this.getClient();
 
         if (!client) {
-            console.error('No Groq client available - API key may not be set');
+            console.error('No Anthropic client available - API key may not be set');
             return null;
         }
 
@@ -66,26 +67,26 @@ If the text is already well-written, make minimal changes.`;
 
             let optimizedText = '';
 
-            const stream = await client.chat.completions.create({
+            const stream = await client.messages.create({
+                model: 'claude-3-5-sonnet-20241022',
+                max_tokens: 4096,
+                temperature: 0.7,
+                system: systemPrompt,
                 messages: [
-                    { role: 'system', content: systemPrompt },
                     { role: 'user', content: text }
                 ],
-                model: 'llama-3.3-70b-versatile',
-                temperature: 0.7,
-                max_tokens: 4096,
-                top_p: 1,
                 stream: true,
             });
 
             for await (const chunk of stream) {
-                const content = chunk.choices[0]?.delta?.content || '';
-                optimizedText += content;
+                if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
+                    optimizedText += chunk.delta.text;
+                }
             }
 
             return optimizedText.trim();
         } catch (error) {
-            console.error('Error optimizing text with Groq:', error);
+            console.error('Error optimizing text with Claude:', error);
             return null;
         }
     }
@@ -101,10 +102,10 @@ If the text is already well-written, make minimal changes.`;
         }
 
         try {
-            await client.chat.completions.create({
-                messages: [{ role: 'user', content: 'Hello' }],
-                model: 'llama-3.3-70b-versatile',
+            await client.messages.create({
+                model: 'claude-3-5-sonnet-20241022',
                 max_tokens: 5,
+                messages: [{ role: 'user', content: 'Hello' }],
             });
             return true;
         } catch (error) {
