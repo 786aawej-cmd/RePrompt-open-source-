@@ -1,6 +1,7 @@
-import { app, BrowserWindow, ipcMain, ipcRenderer } from 'electron';
+import { app, BrowserWindow, ipcMain, ipcRenderer, Notification } from 'electron';
 import * as path from 'path';
 import AutoLaunch from 'auto-launch';
+import { autoUpdater } from 'electron-updater';
 import { TrayManager } from './trayManager';
 import { ShortcutManager } from './shortcutManager';
 import { StorageManager } from './storageManager';
@@ -10,16 +11,13 @@ class RePromptApp {
     private trayManager: TrayManager | null = null;
     private shortcutManager: ShortcutManager | null = null;
     private storageManager: StorageManager;
-    private autoLauncher: AutoLaunch;
+    private autoLauncher!: AutoLaunch;
 
     constructor() {
         this.storageManager = new StorageManager();
-        this.autoLauncher = new AutoLaunch({
-            name: 'RePrompt',
-            path: app.getPath('exe'),
-        });
         this.setupApp();
         this.setupIPC();
+        this.setupAutoUpdater();
     }
 
     private setupApp(): void {
@@ -70,6 +68,11 @@ class RePromptApp {
     }
 
     private async setupAutoLaunch(): Promise<void> {
+        this.autoLauncher = new AutoLaunch({
+            name: 'RePrompt',
+            path: app.getPath('exe'),
+        });
+
         try {
             const isEnabled = await this.autoLauncher.isEnabled();
             if (!isEnabled) {
@@ -159,6 +162,39 @@ class RePromptApp {
                 this.mainWindow?.maximize();
             }
         });
+    }
+
+    private setupAutoUpdater(): void {
+        autoUpdater.autoDownload = true;
+        autoUpdater.autoInstallOnAppQuit = true;
+
+        autoUpdater.on('update-available', (info) => {
+            console.log('Update available:', info.version);
+            new Notification({
+                title: 'Update Available',
+                body: `Version ${info.version} is available and downloading...`
+            }).show();
+        });
+
+        autoUpdater.on('update-downloaded', (info) => {
+            console.log('Update downloaded:', info.version);
+            new Notification({
+                title: 'Update Ready',
+                body: `Version ${info.version} has been downloaded and will be installed on restart.`
+            }).show();
+        });
+
+        autoUpdater.on('error', (err) => {
+            console.error('AutoUpdater error:', err);
+        });
+
+        // Check for updates every hour
+        setInterval(() => {
+            autoUpdater.checkForUpdatesAndNotify();
+        }, 60 * 60 * 1000);
+
+        // Initial check
+        autoUpdater.checkForUpdatesAndNotify();
     }
 
     private showSettingsWindow(): void {

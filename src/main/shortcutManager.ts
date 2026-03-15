@@ -4,6 +4,7 @@ import { ClipboardManager } from './clipboardManager';
 import { KeyboardSimulator } from './keyboardSimulator';
 import { ClaudeClient } from './claudeClient';
 import { AgentManager, Agent } from './agentManager';
+import { ClarificationManager } from './clarificationManager';
 
 export class ShortcutManager {
     private storageManager: StorageManager;
@@ -11,6 +12,7 @@ export class ShortcutManager {
     private keyboardSimulator: KeyboardSimulator;
     private claudeClient: ClaudeClient;
     private agentManager: AgentManager;
+    private clarificationManager: ClarificationManager;
     private enabled: boolean = true;
     private isProcessing: boolean = false;
     private registeredShortcuts: Set<string> = new Set();
@@ -21,6 +23,7 @@ export class ShortcutManager {
         this.keyboardSimulator = new KeyboardSimulator();
         this.claudeClient = new ClaudeClient(storageManager);
         this.agentManager = new AgentManager();
+        this.clarificationManager = new ClarificationManager();
         this.enabled = storageManager.isShortcutEnabled();
 
         // Load saved agent states
@@ -75,6 +78,15 @@ export class ShortcutManager {
         }
     }
 
+    private isVaguePrompt(text: string): boolean {
+        const textToAnalyze = text.trim();
+        if (!textToAnalyze) return false;
+
+        const wordCount = textToAnalyze.split(/\s+/).length;
+        // Prompt is deemed vague if it's exceptionally short
+        return wordCount < 5 || textToAnalyze.length < 20;
+    }
+
     /**
      * Handle shortcut trigger for a specific agent
      */
@@ -86,7 +98,7 @@ export class ShortcutManager {
 
         // Check for API key
         if (!this.storageManager.hasApiKey()) {
-            this.showNotification('API Key Required', 'Please set your Groq API key in settings');
+            this.showNotification('API Key Required', 'Please set your Anthropic API key in settings');
             return;
         }
 
@@ -101,13 +113,27 @@ export class ShortcutManager {
             await this.keyboardSimulator.copy();
             await this.delay(200);
 
-            // Step 3: Read clipboard
-            const originalText = this.clipboardManager.read();
+            let originalText = this.clipboardManager.read();
 
             if (!originalText || originalText.trim().length === 0) {
                 this.showNotification('No Text', 'No text was captured');
                 this.isProcessing = false;
                 return;
+            }
+
+            // Step 3b: Clarification Check
+            if (this.isVaguePrompt(originalText)) {
+                const clarification = await this.clarificationManager.askForClarification(originalText);
+
+                if (clarification === null) {
+                    // User cancelled the prompt popup entirely
+                    this.isProcessing = false;
+                    return;
+                }
+
+                if (clarification.trim() !== '') {
+                    originalText = `${originalText}\n\n[USER CLARIFICATION/CONTEXT ADDED FOR THIS TASK]:\n${clarification}`;
+                }
             }
 
             // Step 4: Send to Claude API with agent-specific prompt

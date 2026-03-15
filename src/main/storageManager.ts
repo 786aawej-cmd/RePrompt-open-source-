@@ -3,7 +3,7 @@ import { Agent } from './agentManager';
 
 interface StoreSchema {
     apiKey: string;
-    shortcut: string;
+    globalProfile: string;
     shortcutEnabled: boolean;
     agents: Agent[];
 }
@@ -17,7 +17,7 @@ export class StorageManager {
             encryptionKey: 'reprompt-secure-key-v1',
             defaults: {
                 apiKey: '',
-                shortcut: 'Ctrl+Shift+O',
+                globalProfile: '',
                 shortcutEnabled: true,
                 agents: [],
             },
@@ -58,17 +58,17 @@ export class StorageManager {
         return apiKey.length > 0 && apiKey.startsWith('sk-ant-');
     }
 
-    // Shortcut Management
-    getShortcut(): string {
-        return this.store.get('shortcut', 'Ctrl+Shift+O');
+    // Global Profile
+    getGlobalProfile(): string {
+        return this.store.get('globalProfile', '');
     }
 
-    setShortcut(shortcut: string): boolean {
+    setGlobalProfile(profile: string): boolean {
         try {
-            this.store.set('shortcut', shortcut);
+            this.store.set('globalProfile', profile);
             return true;
         } catch (error) {
-            console.error('Failed to save shortcut:', error);
+            console.error('Failed to save global profile:', error);
             return false;
         }
     }

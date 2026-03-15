@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Clarification Needed</title>
+    <link rel="stylesheet" href="clarification.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h3>Wait, we need more context!</h3>
+            <button id="closeBtn" class="close-btn">&times;</button>
+        </div>
+        <div class="content">
+            <p class="description">Your prompt seems a bit vague. To generate the best result, please clarify what exactly you meant:</p>
+            <div class="original-text-container">
+                <span class="label">Original:</span>
+                <span id="originalText" class="original-text"></span>
+            </div>
+            <textarea id="clarificationInput" placeholder="e.g. Provide specific details, constraints, tone, or target audience..." autofocus></textarea>
+        </div>
+        <div class="footer">
+            <button id="cancelBtn" class="btn secondary">Cancel</button>
+            <button id="submitBtn" class="btn primary">Optimize Now</button>
+        </div>
+    </div>
+    <script src="clarification.js"></script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 {
   "name": "reprompt",
   "version": "1.0.0",
-  "description": "Global AI Text Optimizer - Background Windows app using Groq API",
+  "description": "Global AI Text Optimizer - Background Windows app using Anthropic API (Claude 3.5 Sonnet)",
   "main": "dist/main/main.js",
   "author": "RePrompt",
   "license": "MIT",
@@ -15,7 +15,8 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
     "auto-launch": "^5.0.6",
-    "electron-store": "^8.1.0"
+    "electron-store": "^8.1.0",
+    "electron-updater": "^6.8.3"
   },
   "devDependencies": {
     "@types/auto-launch": "^5.0.5",
@@ -25,6 +26,27 @@
     "typescript": "^5.9.3"
   },
   "build": {
-    "extends": "electron-builder.yml"
+    "extends": "electron-builder.yml",
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://reprompt-one.vercel.app/download"
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "resources/icons/icon.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "allowElevation": true,
+      "deleteAppDataOnUninstall": true,
+      "include": "resources/installer.nsh",
+      "runAfterFinish": true,
+      "createDesktopShortcut": true,
+      "artifactName": "${productName}-Setup-${version}.${ext}"
+    }
   }
 }

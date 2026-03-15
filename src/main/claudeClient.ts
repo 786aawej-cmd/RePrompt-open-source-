@@ -51,8 +51,7 @@ export class ClaudeClient {
         }
 
         try {
-            // Use agent-specific prompt if provided, otherwise use default
-            const systemPrompt = agentPrompt || `You are a professional text optimizer. Your task is to improve the given text while maintaining its original meaning and intent. 
+            const systemPrompt = agentPrompt || `You are a professional text optimizer. Your task is to improve the given text while maintaining its original meaning and intent.
 
 Guidelines:
 - Fix grammar and spelling errors
@@ -65,13 +64,24 @@ Guidelines:
 
 If the text is already well-written, make minimal changes.`;
 
+            let finalSystemPrompt = systemPrompt;
+            const globalProfile = this.storageManager.getGlobalProfile();
+            if (globalProfile && globalProfile.trim() !== '') {
+                finalSystemPrompt += `
+
+## GLOBAL PROFILE
+The following is context and preferences about the user. When generating your response, you MUST incorporate and respect this profile context.
+Profile:
+${globalProfile}`;
+            }
+
             let optimizedText = '';
 
             const stream = await client.messages.create({
                 model: 'claude-3-5-sonnet-20241022',
                 max_tokens: 4096,
                 temperature: 0.7,
-                system: systemPrompt,
+                system: finalSystemPrompt,
                 messages: [
                     { role: 'user', content: text }
                 ],
